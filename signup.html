@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign up — Dekuu</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  
+<nav>
+  <div class="nav-inner container">
+    <a class="brand" href="index.html">
+      <span class="logo">DK</span><span>Dekuu</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="info.html">Info</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div id="navAuth" class="nav-links"></div>
+  </div>
+</nav>
+<div class="bg-orb"></div><div class="bg-orb o2"></div>
+
+  
+<main class="container" style="padding-top:36px">
+  <h2 class="reveal">Create your account</h2>
+  <form id="s_form" class="form card reveal" style="max-width:560px">
+    <label>Full name<input id="s_name" type="text" class="input" required placeholder="Your name"></label>
+    <label>Email<input id="s_email" type="email" class="input" required placeholder="you@example.com"></label>
+    <label>Password<input id="s_pass" type="password" class="input" required placeholder="Minimum 6 characters"></label>
+    <label>Confirm password<input id="s_pass2" type="password" class="input" required placeholder="Repeat password"></label>
+    <button class="btn" type="submit">Create account</button>
+    <div id="s_out" class="alert" style="margin-top:8px"></div>
+  </form>
+</main>
+
+  
+<footer>
+  <div class="container">
+    <div>© 2025 Dekuu. All rights reserved.</div>
+    <div class="help">Built for GitHub Pages + Supabase. Unique animations and micro-interactions.</div>
+  </div>
+</footer>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

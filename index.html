@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dekuu — Home</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  
+<nav>
+  <div class="nav-inner container">
+    <a class="brand" href="index.html">
+      <span class="logo">DK</span><span>Dekuu</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="info.html">Info</a>
+      <a href="blog.html">Blog</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div id="navAuth" class="nav-links"></div>
+  </div>
+</nav>
+<div class="bg-orb"></div><div class="bg-orb o2"></div>
+
+  
+<header class="hero container">
+  <span class="badge reveal">ANNOUNCEMENT</span>
+  <h1 class="reveal" style="transition-delay:.05s">Welcome to <strong>Dekuu</strong> — crafted, animated, and now powered by Supabase.</h1>
+  <p class="reveal" style="transition-delay:.1s">Login, create your profile, upload an avatar, and contact us — all stored securely in the cloud.</p>
+  <div class="grid cards reveal" style="transition-delay:.15s">
+    <div class="card">
+      <h3>Authentication</h3>
+      <p>Real login/signup via Supabase. See your profile after you sign in.</p>
+      <a class="btn small" href="login.html">Login</a>
+      <a class="btn small ghost" href="signup.html">Sign up</a>
+    </div>
+    <div class="card">
+      <h3>Blog & Info</h3>
+      <p>Manage posts via <code>posts.json</code>. The UI renders them automatically.</p>
+      <a class="btn small" href="info.html">Info</a>
+      <a class="btn small ghost" href="blog.html">Blog</a>
+    </div>
+    <div class="card">
+      <h3>Contact</h3>
+      <p>Submit a message without exposing our email. Stored in the database.</p>
+      <a class="btn small" href="contact.html">Contact us</a>
+    </div>
+  </div>
+</header>
+
+  
+<footer>
+  <div class="container">
+    <div>© 2025 Dekuu. All rights reserved.</div>
+    <div class="help">Built for GitHub Pages + Supabase. Unique animations and micro-interactions.</div>
+  </div>
+</footer>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

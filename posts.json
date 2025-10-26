@@ -1,0 +1,21 @@
+[
+  {
+    "title": "Welcome to Dekuu 2.0",
+    "date": "2025-10-26",
+    "category": "General",
+    "excerpt": "Dekuu now uses Supabase for real auth, profiles with avatars, and a contact inbox."
+  },
+  {
+    "title": "Profile upgrades",
+    "date": "2025-10-26",
+    "category": "Docs",
+    "excerpt": "Change your display name, update your password, and upload an avatar from the Profile page.",
+    "link": "profile.html"
+  },
+  {
+    "title": "Contact inbox",
+    "date": "2025-10-26",
+    "category": "Docs",
+    "excerpt": "Messages sent via the contact page are saved to our database. No email app required."
+  }
+]
