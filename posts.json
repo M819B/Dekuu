@@ -3,7 +3,7 @@
     "title": "Welcome to Dekuu 2.0",
     "date": "2025-10-26",
     "category": "General",
-    "excerpt": "Dekuu now uses Supabase for real auth, profiles with avatars, and a contact inbox."
+    "excerpt": "Dekuu now uses Firebase for real auth, profiles with avatars, and a contact inbox."
   },
   {
     "title": "Profile upgrades",
