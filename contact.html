@@ -1,51 +1,78 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Contact — Dekuu</title>
   <link rel="stylesheet" href="assets/style.css">
-  
 </head>
-<body>
-  
-<nav>
-  <div class="nav-inner container">
-    <a class="brand" href="index.html">
-      <span class="logo">DK</span><span>Dekuu</span>
-    </a>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="info.html">Info</a>
-      <a href="blog.html">Blog</a>
-      <a href="contact.html">Contact</a>
+
+<body class="page-enter">
+  <div class="cursor-glow" id="cursorGlow"></div>
+  <nav id="mainNav">
+    <div class="nav-inner container">
+      <a class="brand" href="index.html"><span class="logo">DK</span><span>Dekuu</span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a><a href="info.html">Info</a><a href="blog.html">Blog</a><a
+          href="contact.html">Contact</a>
+      </div>
+      <div id="navAuth" class="nav-links"></div>
     </div>
-    <div id="navAuth" class="nav-links"></div>
-  </div>
-</nav>
-<div class="bg-orb"></div><div class="bg-orb o2"></div>
+  </nav>
+  <div class="bg-orb o1"></div>
+  <div class="bg-orb o2"></div>
+  <div class="bg-orb o3"></div>
 
-  
-<main class="container" style="padding-top:36px; max-width:860px">
-  <h2 class="reveal">Contact us</h2>
-  <p class="help reveal">Your message will be saved to our database. We’ll reply from there.</p>
-  <form id="c_form" class="form card reveal">
-    <label>Your name<input id="c_name" type="text" class="input" required></label>
-    <label>Your email<input id="c_email" type="email" class="input" required></label>
-    <label>Message<textarea id="c_msg" class="textarea" required placeholder="How can we help?"></textarea></label>
-    <button class="btn" type="submit">Send</button>
-    <div id="c_out" class="alert" style="margin-top:8px"></div>
-  </form>
-</main>
+  <main class="container" style="padding-top:56px;max-width:860px">
+    <span class="badge reveal" style="margin-bottom:16px;display:inline-flex">✉️ Get in touch</span>
+    <h2 class="reveal" style="margin-bottom:4px;transition-delay:.05s">Contact us</h2>
+    <p class="reveal" style="margin-bottom:28px;transition-delay:.1s">Your message goes straight to our database. We'll
+      get back to you.</p>
 
-  
-<footer>
-  <div class="container">
-    <div>© 2025 Dekuu. All rights reserved.</div>
-    <div class="help">Built for GitHub Pages + Firebase. Unique animations and micro-interactions.</div>
-  </div>
-</footer>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+      <form id="c_form" class="form card">
+        <label>Your name<input id="c_name" type="text" class="input" required placeholder="Full name"></label>
+        <label>Email address<input id="c_email" type="email" class="input" required
+            placeholder="you@example.com"></label>
+        <label>Message<textarea id="c_msg" class="textarea" required placeholder="How can we help?"></textarea></label>
+        <button class="btn" type="submit">Send message →</button>
+        <div id="c_out" class="alert" style="margin-top:4px"></div>
+      </form>
 
+      <div style="display:grid;gap:14px">
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <h4 style="margin-bottom:4px">Fast response</h4>
+          <p style="font-size:.88rem">We read every message and reply as soon as possible.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔒</div>
+          <h4 style="margin-bottom:4px">Private & secure</h4>
+          <p style="font-size:.88rem">Your message is stored securely. We never share your data.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌐</div>
+          <h4 style="margin-bottom:4px">Always available</h4>
+          <p style="font-size:.88rem">Reach out any time — no phone calls, no queues.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-brand">Dekuu</span><span class="help">© 2025 Dekuu.</span>
+      </div>
+    </div>
+  </footer>
   <script type="module" src="assets/app.js"></script>
+  <script>
+    const cg = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', e => { cg.style.left = e.clientX + 'px'; cg.style.top = e.clientY + 'px'; });
+    window.addEventListener('scroll', () => document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20));
+  </script>
 </body>
+
 </html>

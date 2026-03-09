@@ -1,47 +1,51 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Info — Dekuu</title>
   <link rel="stylesheet" href="assets/style.css">
-  
 </head>
-<body>
-  
-<nav>
-  <div class="nav-inner container">
-    <a class="brand" href="index.html">
-      <span class="logo">DK</span><span>Dekuu</span>
-    </a>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="info.html">Info</a>
-      <a href="blog.html">Blog</a>
-      <a href="contact.html">Contact</a>
+
+<body class="page-enter">
+  <div class="cursor-glow" id="cursorGlow"></div>
+  <nav id="mainNav">
+    <div class="nav-inner container">
+      <a class="brand" href="index.html"><span class="logo">DK</span><span>Dekuu</span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a><a href="info.html">Info</a><a href="blog.html">Blog</a><a
+          href="contact.html">Contact</a>
+      </div>
+      <div id="navAuth" class="nav-links"></div>
     </div>
-    <div id="navAuth" class="nav-links"></div>
-  </div>
-</nav>
-<div class="bg-orb"></div><div class="bg-orb o2"></div>
-
-  
-<main class="container" style="padding-top:36px">
-  <h2 class="reveal">Info</h2>
-  <p class="help reveal">This page renders entries from <code>posts.json</code>.</p>
-  <section id="posts" class="posts reveal">
-    <div class="alert">Loading…</div>
-  </section>
-</main>
-
-  
-<footer>
-  <div class="container">
-    <div>© 2025 Dekuu. All rights reserved.</div>
-    <div class="help">Built for GitHub Pages + Firebase. Unique animations and micro-interactions.</div>
-  </div>
-</footer>
-
+  </nav>
+  <div class="bg-orb o1"></div>
+  <div class="bg-orb o2"></div>
+  <div class="bg-orb o3"></div>
+  <main class="container" style="padding-top:56px;max-width:800px">
+    <div class="reveal">
+      <span class="badge" style="margin-bottom:16px;display:inline-flex">📌 Site info</span>
+      <h2 style="margin-bottom:4px">Info</h2>
+      <p style="margin-bottom:28px">Updates and information about Dekuu rendered from <code>posts.json</code>.</p>
+    </div>
+    <section id="posts" class="posts reveal" style="transition-delay:.08s">
+      <div class="skeleton" style="height:80px;margin-bottom:10px"></div>
+      <div class="skeleton" style="height:80px;margin-bottom:10px;opacity:.7"></div>
+      <div class="skeleton" style="height:80px;opacity:.4"></div>
+    </section>
+  </main>
+  <footer>
+    <div class="container">
+      <div class="footer-inner"><span class="footer-brand">Dekuu</span><span class="help">© 2025 Dekuu.</span></div>
+    </div>
+  </footer>
   <script type="module" src="assets/app.js"></script>
+  <script>
+    const cg = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', e => { cg.style.left = e.clientX + 'px'; cg.style.top = e.clientY + 'px'; });
+    window.addEventListener('scroll', () => document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20));
+  </script>
 </body>
+
 </html>

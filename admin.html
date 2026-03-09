@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — Dekuu</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(124, 58, 237, .4)
+      }
+
+      50% {
+        box-shadow: 0 0 0 8px rgba(124, 58, 237, 0)
+      }
+    }
+
+    @keyframes slide-in {
+      from {
+        opacity: 0;
+        transform: translateY(20px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0
+      }
+
+      100% {
+        background-position: 200% 0
+      }
+    }
+
+    .admin-header {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(124, 58, 237, .12), rgba(34, 211, 238, .06));
+      border: 1px solid rgba(124, 58, 237, .2);
+      border-radius: 20px;
+      padding: 28px 32px;
+      margin-bottom: 28px
+    }
+
+    .admin-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(124, 58, 237, .05), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 3s infinite
+    }
+
+    .admin-title {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 900;
+      background: linear-gradient(135deg, #e6e8ee, #c4b5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0 0 4px
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 14px;
+      margin-bottom: 28px
+    }
+
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(255, 255, 255, .03), rgba(255, 255, 255, .01));
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 18px;
+      padding: 22px 18px;
+      text-align: center;
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(124, 58, 237, .4);
+      box-shadow: 0 12px 40px rgba(124, 58, 237, .15)
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(124, 58, 237, .08), transparent 70%)
+    }
+
+    .stat-card:nth-child(2)::after {
+      background: radial-gradient(circle at 50% 0%, rgba(34, 211, 238, .08), transparent 70%)
+    }
+
+    .stat-card:nth-child(3)::after {
+      background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, .08), transparent 70%)
+    }
+
+    .stat-card:nth-child(4)::after {
+      background: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, .08), transparent 70%)
+    }
+
+    .stat-num {
+      font-size: 2.2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #7c3aed, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1
+    }
+
+    .stat-label {
+      color: #99a3b2;
+      font-size: .82rem;
+      margin-top: 6px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px
+    }
+
+    .stat-icon {
+      font-size: 1.4rem;
+      margin-bottom: 8px
+    }
+
+    .admin-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      background: rgba(255, 255, 255, .02);
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 14px;
+      padding: 6px
+    }
+
+    .tab-btn {
+      padding: 9px 16px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: #99a3b2;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s ease;
+      font-size: .88rem
+    }
+
+    .tab-btn:hover {
+      color: #e6e8ee;
+      background: rgba(255, 255, 255, .04)
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(124, 58, 237, .25), rgba(34, 211, 238, .12));
+      color: #e6e8ee;
+      box-shadow: 0 2px 12px rgba(124, 58, 237, .2)
+    }
+
+    .tab-panel {
+      display: none;
+      animation: slide-in .3s ease
+    }
+
+    .tab-panel.active {
+      display: block
+    }
+
+    .user-row,
+    .msg-row {
+      background: linear-gradient(135deg, rgba(255, 255, 255, .025), transparent);
+      border: 1px solid rgba(255, 255, 255, .07);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      transition: all .2s ease
+    }
+
+    .user-row:hover,
+    .msg-row:hover {
+      border-color: rgba(124, 58, 237, .35);
+      background: linear-gradient(135deg, rgba(124, 58, 237, .06), transparent);
+      transform: translateX(2px)
+    }
+
+    .user-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #7c3aed, #22d3ee);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+      color: white;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, .3)
+    }
+
+    .user-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .user-name {
+      font-weight: 700;
+      font-size: .95rem
+    }
+
+    .user-email {
+      color: #99a3b2;
+      font-size: .82rem;
+      margin-top: 2px
+    }
+
+    .user-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap
+    }
+
+    .badge-verified {
+      background: rgba(16, 185, 129, .12);
+      border: 1px solid rgba(16, 185, 129, .3);
+      color: #10b981;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 700
+    }
+
+    .badge-unverified {
+      background: rgba(245, 158, 11, .12);
+      border: 1px solid rgba(245, 158, 11, .3);
+      color: #f59e0b;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 700
+    }
+
+    .badge-admin {
+      background: rgba(124, 58, 237, .15);
+      border: 1px solid rgba(124, 58, 237, .35);
+      color: #c4b5fd;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 700
+    }
+
+    .btn.danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626)
+    }
+
+    .btn.success {
+      background: linear-gradient(135deg, #10b981, #059669)
+    }
+
+    .blog-post-row {
+      background: linear-gradient(135deg, rgba(255, 255, 255, .025), transparent);
+      border: 1px solid rgba(255, 255, 255, .07);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 8px;
+      transition: all .2s ease
+    }
+
+    .blog-post-row:hover {
+      border-color: rgba(124, 58, 237, .35);
+      transform: translateX(2px)
+    }
+
+    .search-bar {
+      width: 100%;
+      margin-bottom: 14px
+    }
+
+    #admin_out {
+      margin-bottom: 16px
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #99a3b2;
+      padding: 48px 20px;
+      font-size: .95rem
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px
+    }
+
+    .section-title {
+      font-weight: 800;
+      font-size: 1rem;
+      color: #e6e8ee
+    }
+
+    .perm-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px
+    }
+
+    .perm-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      background: rgba(255, 255, 255, .02);
+      border: 1px solid rgba(255, 255, 255, .07);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: .87rem;
+      transition: all .15s ease
+    }
+
+    .perm-item:hover {
+      border-color: rgba(124, 58, 237, .35);
+      background: rgba(124, 58, 237, .06)
+    }
+
+    .perm-item input {
+      accent-color: #7c3aed;
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(6px)
+    }
+
+    .modal-overlay.open {
+      display: flex;
+      animation: slide-in .2s ease
+    }
+
+    .modal {
+      background: #0b1020;
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 20px;
+      padding: 28px;
+      max-width: 500px;
+      width: 92%;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, .6);
+      max-height: 88vh;
+      overflow-y: auto
+    }
+
+    .modal h4 {
+      margin: 0 0 18px;
+      font-size: 1.15rem;
+      font-weight: 800
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+      justify-content: flex-end
+    }
+
+    .global-preview {
+      background: linear-gradient(135deg, rgba(124, 58, 237, .15), rgba(34, 211, 238, .1));
+      border: 1px solid rgba(124, 58, 237, .3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: .9rem;
+      color: #e6e8ee;
+      display: none
+    }
+
+    .loading-skeleton {
+      background: linear-gradient(90deg, rgba(255, 255, 255, .04) 25%, rgba(255, 255, 255, .08) 50%, rgba(255, 255, 255, .04) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 10px;
+      height: 60px;
+      margin-bottom: 8px
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="nav-inner container">
+      <a class="brand" href="index.html"><span class="logo">DK</span><span>Dekuu</span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a><a href="info.html">Info</a><a href="blog.html">Blog</a><a
+          href="contact.html">Contact</a>
+      </div>
+      <div id="navAuth" class="nav-links"></div>
+    </div>
+  </nav>
+  <div class="bg-orb"></div>
+  <div class="bg-orb o2"></div>
+
+  <main class="container" style="padding-top:32px;max-width:1060px">
+
+    <div id="admin_loading" style="text-align:center;padding:80px;color:#99a3b2">
+      <div style="font-size:2rem;margin-bottom:12px;animation:float-y 2s ease-in-out infinite">⚡</div>
+      Checking access…
+    </div>
+
+    <div id="admin_panel" style="display:none">
+
+      <div class="admin-header reveal">
+        <div
+          style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:relative;z-index:1">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <span class="badge">ADMIN PANEL</span>
+              <span id="admin_role_badge" style="font-size:.75rem;color:#99a3b2"></span>
+            </div>
+            <div class="admin-title">Dashboard</div>
+            <div style="color:#99a3b2;font-size:.9rem" id="admin_welcome">Welcome back</div>
+          </div>
+          <a href="profile.html" class="btn small ghost">← Back to Profile</a>
+        </div>
+      </div>
+
+      <div id="admin_out" class="alert" style="display:none"></div>
+
+      <div id="stats_section">
+        <div class="stat-grid">
+          <div class="stat-card reveal" style="animation-delay:.05s">
+            <div class="stat-icon">👥</div>
+            <div class="stat-num" id="stat_users">—</div>
+            <div class="stat-label">Total Users</div>
+          </div>
+          <div class="stat-card reveal" style="animation-delay:.1s">
+            <div class="stat-icon">✅</div>
+            <div class="stat-num" id="stat_verified">—</div>
+            <div class="stat-label">Verified</div>
+          </div>
+          <div class="stat-card reveal" style="animation-delay:.15s">
+            <div class="stat-icon">✉️</div>
+            <div class="stat-num" id="stat_messages">—</div>
+            <div class="stat-label">Messages</div>
+          </div>
+          <div class="stat-card reveal" style="animation-delay:.2s">
+            <div class="stat-icon">📝</div>
+            <div class="stat-num" id="stat_posts">—</div>
+            <div class="stat-label">Blog Posts</div>
+          </div>
+          <div class="stat-card reveal" style="animation-delay:.25s">
+            <div class="stat-icon">🚫</div>
+            <div class="stat-num" id="stat_banned">—</div>
+            <div class="stat-label">Banned</div>
+          </div>
+          <div class="stat-card reveal" style="animation-delay:.3s">
+            <div class="stat-icon">🛡️</div>
+            <div class="stat-num" id="stat_admins">—</div>
+            <div class="stat-label">Admins</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-tabs reveal">
+        <button class="tab-btn active" data-tab="users">👥 Users</button>
+        <button class="tab-btn" data-tab="messages">✉️ Messages</button>
+        <button class="tab-btn" data-tab="blog">📝 Blog</button>
+        <button class="tab-btn" data-tab="roles">🛡️ Roles</button>
+        <button class="tab-btn" data-tab="global">📢 Broadcast</button>
+        <button class="tab-btn" data-tab="logs">📜 Logs</button>
+        <button class="tab-btn" data-tab="export">📤 Export</button>
+        <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
+      </div>
+
+      <div class="tab-panel active" id="tab_users">
+        <input class="input search-bar" id="user_search" placeholder="🔍  Search users…">
+        <div id="users_list">
+          <div class="loading-skeleton"></div>
+          <div class="loading-skeleton" style="opacity:.6"></div>
+          <div class="loading-skeleton" style="opacity:.3"></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab_messages">
+        <input class="input search-bar" id="msg_search" placeholder="🔍  Search messages…">
+        <div id="messages_list">
+          <div class="loading-skeleton"></div>
+          <div class="loading-skeleton" style="opacity:.6"></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab_blog">
+        <div class="card reveal" style="margin-bottom:20px">
+          <div class="section-header"><span class="section-title">✏️ Add new post</span></div>
+          <div style="display:grid;gap:12px">
+            <input id="blog_title" class="input" placeholder="Post title">
+            <input id="blog_excerpt" class="input" placeholder="Short excerpt">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <input id="blog_category" class="input" placeholder="Category">
+              <input id="blog_date" class="input" type="date">
+            </div>
+            <input id="blog_link" class="input" placeholder="Link (optional)">
+            <button id="blog_add_btn" class="btn small" type="button">+ Add Post</button>
+          </div>
+        </div>
+        <div id="blog_list">
+          <div class="loading-skeleton"></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab_roles">
+        <div class="card reveal" style="margin-bottom:20px">
+          <div class="section-header">
+            <div>
+              <div class="section-title">🛡️ Roles & Permissions</div>
+              <p style="color:#99a3b2;font-size:.85rem;margin:4px 0 0">Create roles and assign them to users from the
+                Users tab.</p>
+            </div>
+            <button id="create_role_btn" class="btn small" type="button">+ New Role</button>
+          </div>
+        </div>
+        <div id="roles_list">
+          <div class="loading-skeleton"></div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab_global">
+        <div class="card reveal">
+          <div class="section-title" style="margin-bottom:6px">📢 Global Banner Broadcast</div>
+          <p style="color:#99a3b2;font-size:.88rem;margin:0 0 18px;line-height:1.6">Send an announcement banner that
+            appears at the top of your site for all visitors.</p>
+          <div style="display:grid;gap:12px">
+            <textarea id="global_msg" class="textarea" placeholder="Type your announcement…" style="min-height:90px"
+              oninput="previewGlobal(this.value)"></textarea>
+            <div id="global_preview" class="global-preview"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button id="send_global_btn" class="btn small" type="button">📢 Broadcast to All</button>
+              <button id="clear_global_btn" class="btn small ghost" type="button">🗑 Clear Banner</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="admin_denied" style="display:none;text-align:center;padding:80px">
+      <div style="font-size:3.5rem;margin-bottom:16px">🔒</div>
+      <h3 style="margin:0 0 8px">Access Denied</h3>
+      <p style="color:#99a3b2">You don't have admin privileges.</p>
+      <a href="index.html" class="btn small" style="margin-top:12px">Go Home</a>
+    </div>
+
+  </main>
+
+  <!-- Edit User Modal -->
+  <div class="modal-overlay" id="edit_modal">
+    <div class="modal">
+      <h4>✏️ Edit User</h4>
+      <div style="display:grid;gap:10px">
+        <label style="font-size:.85rem;color:#99a3b2;font-weight:600">Display Name<input id="edit_name" class="input"
+            placeholder="Display name" style="margin-top:4px"></label>
+        <label style="font-size:.85rem;color:#99a3b2;font-weight:600">Email (read only)<input id="edit_email"
+            class="input" type="email" disabled style="opacity:.45;margin-top:4px"></label>
+        <label style="font-size:.85rem;color:#99a3b2;font-weight:600">Assign Role<select id="edit_role" class="input"
+            style="cursor:pointer;margin-top:4px">
+            <option value="">No role</option>
+          </select></label>
+        <label
+          style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:12px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:12px">
+          <input id="edit_verified" type="checkbox" style="accent-color:#10b981;width:16px;height:16px">
+          <div>
+            <div style="font-size:.9rem;font-weight:600">✅ Mark as verified</div>
+            <div style="font-size:.78rem;color:#99a3b2">Email verification status</div>
+          </div>
+        </label>
+        <label
+          style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:12px;background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2);border-radius:12px">
+          <input id="edit_admin" type="checkbox" style="accent-color:#7c3aed;width:16px;height:16px">
+          <div>
+            <div style="font-size:.9rem;font-weight:600">🛡️ Admin access</div>
+            <div style="font-size:.78rem;color:#99a3b2">Grant admin panel access</div>
+          </div>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn small" id="edit_send_email_btn" style="margin-right:auto">📧 Email User</button>
+        <button class="btn small ghost" id="edit_cancel">Cancel</button>
+        <button class="btn small" id="edit_save">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Role Modal -->
+  <div class="modal-overlay" id="role_modal">
+    <div class="modal">
+      <h4 id="role_modal_title">🛡️ Create Role</h4>
+      <div style="display:grid;gap:16px">
+        <label style="font-size:.85rem;color:#99a3b2;font-weight:600">Role Name<input id="role_name" class="input"
+            placeholder="e.g. Moderator, Editor…" style="margin-top:4px"></label>
+        <div>
+          <div style="font-size:.85rem;color:#99a3b2;font-weight:600;margin-bottom:8px">Permissions</div>
+          <div style="max-height:340px;overflow-y:auto;padding-right:4px">
+            <div style="margin-bottom:12px">
+              <div
+                style="font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">
+                Panel</div>
+              <div class="perm-grid"><label class="perm-item"><input type="checkbox" id="perm_access_admin"><span>⚡
+                    Access Admin Panel</span></label><label class="perm-item"><input type="checkbox"
+                    id="perm_view_dashboard"><span>📊 View Dashboard Stats</span></label></div>
+            </div>
+            <div style="margin-bottom:12px">
+              <div
+                style="font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">
+                Users</div>
+              <div class="perm-grid"><label class="perm-item"><input type="checkbox" id="perm_view_users"><span>👁 View
+                    Users</span></label><label class="perm-item"><input type="checkbox" id="perm_verify_users"><span>✅
+                    Verify Users</span></label><label class="perm-item"><input type="checkbox"
+                    id="perm_edit_users"><span>✏️ Edit Users</span></label><label class="perm-item"><input
+                    type="checkbox" id="perm_delete_users"><span>🗑 Delete Users</span></label><label
+                  class="perm-item"><input type="checkbox" id="perm_ban_users"><span>🚫 Ban Users</span></label><label
+                  class="perm-item"><input type="checkbox" id="perm_unban_users"><span>✅ Unban
+                    Users</span></label><label class="perm-item"><input type="checkbox" id="perm_assign_roles"><span>🎭
+                    Assign Roles</span></label><label class="perm-item"><input type="checkbox"
+                    id="perm_view_user_activity"><span>📋 User Activity</span></label></div>
+            </div>
+            <div style="margin-bottom:12px">
+              <div
+                style="font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">
+                Admins</div>
+              <div class="perm-grid"><label class="perm-item"><input type="checkbox" id="perm_promote_admins"><span>⬆️
+                    Promote Admins</span></label><label class="perm-item"><input type="checkbox"
+                    id="perm_demote_admins"><span>⬇️ Demote Admins</span></label><label class="perm-item"><input
+                    type="checkbox" id="perm_manage_roles"><span>🛡️ Manage Roles</span></label></div>
+            </div>
+            <div style="margin-bottom:12px">
+              <div
+                style="font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">
+                Content</div>
+              <div class="perm-grid"><label class="perm-item"><input type="checkbox" id="perm_manage_blog"><span>📝
+                    Manage Blog</span></label><label class="perm-item"><input type="checkbox"
+                    id="perm_publish_blog"><span>🚀 Publish Posts</span></label><label class="perm-item"><input
+                    type="checkbox" id="perm_delete_blog"><span>🗑 Delete Posts</span></label></div>
+            </div>
+            <div style="margin-bottom:12px">
+              <div
+                style="font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">
+                Messages</div>
+              <div class="perm-grid"><label class="perm-item"><input type="checkbox" id="perm_view_messages"><span>✉️
+                    View Messages</span></label><label class="perm-item"><input type="checkbox"
+                    id="perm_reply_messages"><span>↩️ Reply</span></label><label class="perm-item"><input
+                    type="checkbox" id="perm_delete_messages"><span>🗑 Delete</span></label></div>
+            </div>
+            <div style="margin-bottom:12px">
+              <div
+                style="font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">
+                Comms</div>
+              <div class="perm-grid"><label class="perm-item"><input type="checkbox" id="perm_send_global_msg"><span>📢
+                    Broadcast</span></label><label class="perm-item"><input type="checkbox"
+                    id="perm_send_emails"><span>📧 Send Emails</span></label><label class="perm-item"><input
+                    type="checkbox" id="perm_manage_banner"><span>🏷 Banner</span></label></div>
+            </div>
+            <div style="margin-bottom:12px">
+              <div
+                style="font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">
+                System</div>
+              <div class="perm-grid"><label class="perm-item"><input type="checkbox" id="perm_view_logs"><span>📜 View
+                    Logs</span></label><label class="perm-item"><input type="checkbox" id="perm_export_data"><span>📤
+                    Export Data</span></label><label class="perm-item"><input type="checkbox"
+                    id="perm_manage_settings"><span>⚙️ Settings</span></label></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn small ghost" id="role_cancel">Cancel</button>
+        <button class="btn small" id="role_save">Save Role</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Email Modal -->
+  <div class="modal-overlay" id="email_modal">
+    <div class="modal">
+      <h4>📧 Send Email</h4>
+      <div style="display:grid;gap:10px">
+        <label style="font-size:.85rem;color:var(--muted-2);font-weight:600">To<input id="email_to" class="input"
+            type="email" placeholder="recipient@email.com" style="margin-top:4px"></label>
+        <label style="font-size:.85rem;color:var(--muted-2);font-weight:600">Subject<input id="email_subject"
+            class="input" placeholder="Subject…" style="margin-top:4px"></label>
+        <label style="font-size:.85rem;color:var(--muted-2);font-weight:600">Body<textarea id="email_body"
+            class="textarea" placeholder="Write your message…"
+            style="min-height:110px;margin-top:4px"></textarea></label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn small ghost" id="email_cancel">Cancel</button>
+        <button class="btn small" id="email_send_btn">Send Email →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity Modal -->
+  <div class="modal-overlay" id="activity_modal">
+    <div class="modal" style="max-width:560px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <h4 style="margin:0" id="activity_modal_title">📋 User Activity</h4>
+        <button id="activity_close" class="btn small ghost" style="padding:6px 10px">✕</button>
+      </div>
+      <div id="activity_list"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div>© 2025 Dekuu. All rights reserved.</div>
+      <div class="help">Admin Panel — Dekuu</div>
+    </div>
+  </footer>
+  <script>function previewGlobal(val) { const el = document.getElementById('global_preview'); if (val.trim()) { el.style.display = 'block'; el.innerHTML = `<strong>Preview:</strong> 📢 ${val}` } else el.style.display = 'none' }</script>
+  <script type="module" src="assets/admin.js"></script>
+</body>
+
+</html>

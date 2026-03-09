@@ -1,64 +1,150 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dekuu — Home</title>
   <link rel="stylesheet" href="assets/style.css">
-  
 </head>
-<body>
-  
-<nav>
-  <div class="nav-inner container">
-    <a class="brand" href="index.html">
-      <span class="logo">DK</span><span>Dekuu</span>
-    </a>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="info.html">Info</a>
-      <a href="blog.html">Blog</a>
-      <a href="contact.html">Contact</a>
-    </div>
-    <div id="navAuth" class="nav-links"></div>
-  </div>
-</nav>
-<div class="bg-orb"></div><div class="bg-orb o2"></div>
 
-  
-<header class="hero container">
-  <span class="badge reveal">ANNOUNCEMENT</span>
-  <h1 class="reveal" style="transition-delay:.05s">Welcome to <strong>Dekuu</strong> — crafted, animated, and now powered by Firebase.</h1>
-  <p class="reveal" style="transition-delay:.1s">Login, create your profile, upload an avatar, and contact us — all stored securely in the cloud.</p>
-  <div class="grid cards reveal" style="transition-delay:.15s">
-    <div class="card">
-      <h3>Authentication</h3>
-      <p>Real login/signup via Firebase. See your profile after you sign in.</p>
-      <a class="btn small" href="login.html">Login</a>
-      <a class="btn small ghost" href="signup.html">Sign up</a>
-    </div>
-    <div class="card">
-      <h3>Blog & Info</h3>
-      <p>Manage posts via <code>posts.json</code>. The UI renders them automatically.</p>
-      <a class="btn small" href="info.html">Info</a>
-      <a class="btn small ghost" href="blog.html">Blog</a>
-    </div>
-    <div class="card">
-      <h3>Contact</h3>
-      <p>Submit a message without exposing our email. Stored in the database.</p>
-      <a class="btn small" href="contact.html">Contact us</a>
-    </div>
-  </div>
-</header>
+<body class="page-enter">
+  <div class="cursor-glow" id="cursorGlow"></div>
 
-  
-<footer>
-  <div class="container">
-    <div>© 2025 Dekuu. All rights reserved.</div>
-    <div class="help">Built for GitHub Pages + Firebase. Unique animations and micro-interactions.</div>
-  </div>
-</footer>
+  <nav id="mainNav">
+    <div class="nav-inner container">
+      <a class="brand" href="index.html"><span class="logo">DK</span><span>Dekuu</span></a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="info.html">Info</a>
+        <a href="blog.html">Blog</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div id="navAuth" class="nav-links"></div>
+    </div>
+  </nav>
+
+  <div class="bg-orb o1"></div>
+  <div class="bg-orb o2"></div>
+  <div class="bg-orb o3"></div>
+
+  <header class="hero container">
+    <div class="hero-eyebrow reveal">
+      <span class="badge">✦ Welcome to Dekuu</span>
+    </div>
+    <h1 class="reveal" style="transition-delay:.08s">
+      A place built for <strong>you</strong> — crafted, animated, and cloud-powered.
+    </h1>
+    <p class="reveal" style="transition-delay:.14s">
+      Sign in, build your profile, send messages, and explore — all stored securely and styled beautifully.
+    </p>
+    <div class="reveal" style="transition-delay:.18s;display:flex;gap:10px;flex-wrap:wrap;margin-bottom:48px">
+      <a class="btn" href="signup.html">Get started free</a>
+      <a class="btn ghost" href="info.html">Learn more</a>
+    </div>
+
+    <div class="divider reveal" style="transition-delay:.22s"></div>
+
+    <div class="grid cards stagger reveal" style="transition-delay:.24s;margin-top:32px" id="featureCards">
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <h3>Authentication</h3>
+        <p style="margin:6px 0 16px">Secure login and signup with email verification and two-factor auth.</p>
+        <div style="display:flex;gap:8px">
+          <a class="btn small" href="login.html">Login</a>
+          <a class="btn small ghost" href="signup.html">Sign up</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📖</div>
+        <h3>Blog & Info</h3>
+        <p style="margin:6px 0 16px">Browse posts and updates. Content managed through a simple JSON file.</p>
+        <div style="display:flex;gap:8px">
+          <a class="btn small" href="info.html">Info</a>
+          <a class="btn small ghost" href="blog.html">Blog</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">✉️</div>
+        <h3>Contact</h3>
+        <p style="margin:6px 0 16px">Send us a message. It goes straight to our database — no email exposed.</p>
+        <a class="btn small" href="contact.html">Contact us</a>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="reveal" style="transition-delay:.3s;margin-top:48px">
+      <div class="divider"></div>
+      <div
+        style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:24px;margin-top:32px;text-align:center">
+        <div class="reveal scale-in" style="transition-delay:.32s">
+          <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:900" class="grad-text">100%</div>
+          <div style="color:var(--muted);font-size:.85rem;margin-top:4px">Free to use</div>
+        </div>
+        <div class="reveal scale-in" style="transition-delay:.36s">
+          <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:900" class="grad-text">Firebase</div>
+          <div style="color:var(--muted);font-size:.85rem;margin-top:4px">Powered by</div>
+        </div>
+        <div class="reveal scale-in" style="transition-delay:.4s">
+          <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:900" class="grad-text">E2E</div>
+          <div style="color:var(--muted);font-size:.85rem;margin-top:4px">Secure auth</div>
+        </div>
+        <div class="reveal scale-in" style="transition-delay:.44s">
+          <div style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:900" class="grad-text">2FA</div>
+          <div style="color:var(--muted);font-size:.85rem;margin-top:4px">Protected</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-brand">Dekuu</span>
+        <span class="help">© 2025 Dekuu. All rights reserved.</span>
+        <div style="display:flex;gap:12px">
+          <a href="contact.html" style="color:var(--muted);font-size:.85rem;text-decoration:none;transition:color .2s"
+            onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Contact</a>
+          <a href="info.html" style="color:var(--muted);font-size:.85rem;text-decoration:none;transition:color .2s"
+            onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">Info</a>
+        </div>
+      </div>
+    </div>
+  </footer>
 
   <script type="module" src="assets/app.js"></script>
+  <script>
+    // Cursor glow
+    const cg = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', e => {
+      cg.style.left = e.clientX + 'px';
+      cg.style.top = e.clientY + 'px';
+    });
+    // Nav scroll effect
+    window.addEventListener('scroll', () => {
+      document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20);
+    });
+    // Card mouse tracking
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+        card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+      });
+    });
+    // Btn ripple
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const r = document.createElement('span');
+        r.className = 'ripple';
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size / 2}px;top:${e.clientY - rect.top - size / 2}px`;
+        btn.appendChild(r);
+        setTimeout(() => r.remove(), 700);
+      });
+    });
+  </script>
 </body>
+
 </html>
