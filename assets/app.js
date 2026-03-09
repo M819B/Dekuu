@@ -26,7 +26,7 @@ async function sendCustomEmail(to, type, linkOrCode, name) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ to, type, link: linkOrCode, name })
     });
-  } catch (err) {
+  } catch(err) {
     console.warn('Custom email failed, Firebase fallback used:', err);
   }
 }
@@ -37,42 +37,42 @@ async function checkGlobalBanner() {
   try {
     const { getDoc: gd, doc: d } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
     const snap = await gd(d(db, 'global', 'banner'));
-    if (snap.exists() && snap.data().active && snap.data().message) {
+    if(snap.exists() && snap.data().active && snap.data().message) {
       const banner = document.createElement('div');
       banner.style.cssText = 'background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(34,211,238,.15));border-bottom:1px solid rgba(124,58,237,.3);padding:10px 24px;text-align:center;font-size:.9rem;color:#e6e8ee;position:relative';
       banner.innerHTML = `<span>📢 ${snap.data().message}</span><button onclick="this.parentNode.remove()" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem">✕</button>`;
       document.body.insertBefore(banner, document.body.firstChild);
     }
-  } catch (e) { console.warn('Banner check failed:', e); }
+  } catch(e) { console.warn('Banner check failed:', e); }
 }
 
-const $ = (s, r = document) => r.querySelector(s);
-const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 
 // Active nav
-(function () {
+(function(){
   const page = location.pathname.split('/').pop() || 'index.html';
   $$('.nav-links a').forEach(a => {
-    if (a.getAttribute('href') === page) a.classList.add('active-link');
+    if(a.getAttribute('href') === page) a.classList.add('active-link');
   });
 })();
 
 // Reveal animation
 const obs = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); obs.unobserve(e.target); } });
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('show'); obs.unobserve(e.target); } });
 }, { threshold: .12 });
 $$('.reveal').forEach(el => obs.observe(el));
 
 // Auth nav
 async function renderNav(user) {
-  const nav = $('#navAuth'); if (!nav) return;
-  if (user) {
+  const nav = $('#navAuth'); if(!nav) return;
+  if(user){
     // Check if user is admin
     let isAdmin = false;
     try {
       const adminSnap = await getDoc(doc(db, 'admins', user.uid));
       isAdmin = adminSnap.exists();
-    } catch (e) { }
+    } catch(e) {}
 
     const adminBtn = isAdmin
       ? `<a class="btn small" href="admin.html" style="background:linear-gradient(135deg,#7c3aed,#22d3ee);position:relative;overflow:hidden" id="adminNavBtn">
@@ -97,6 +97,7 @@ async function onGoogleSignIn(outEl) {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
+    const isNew = result._tokenResponse?.isNewUser;
     // Save user record to Firestore
     try {
       await setDoc(doc(db, 'users', user.uid), {
@@ -107,18 +108,36 @@ async function onGoogleSignIn(outEl) {
       // Google users are auto-verified
       const q = query(collection(db, 'verified_users'), where('uid', '==', user.uid));
       const snap = await getDocs(q);
-      if (snap.empty) {
+      if(snap.empty) {
         await addDoc(collection(db, 'verified_users'), {
           uid: user.uid, email: user.email, verifiedAt: new Date(), verifiedBy: 'google'
         });
       }
-    } catch (e) { console.warn('Could not save Google user record:', e); }
+    } catch(e) { console.warn('Could not save Google user record:', e); }
+    // Send welcome email with password reset link for new Google users
+    if(isNew) {
+      try {
+        await sendPasswordResetEmail(auth, user.email, {
+          url: window.location.origin + '/reset-password.html'
+        });
+        await fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: user.email,
+            type: 'googleWelcome',
+            name: user.displayName || user.email,
+            link: window.location.origin + '/login.html'
+          })
+        });
+      } catch(e) { console.warn('Welcome email failed:', e); }
+    }
     outSet(outEl, 'Signed in with Google! Redirecting…');
     setTimeout(() => location.href = 'profile.html', 700);
-  } catch (err) {
-    if (err.code === 'auth/popup-blocked') {
+  } catch(err) {
+    if(err.code === 'auth/popup-blocked') {
       outSet(outEl, 'Popup was blocked by your browser. Please allow popups for this site and try again.', true);
-    } else if (err.code === 'auth/popup-closed-by-user') {
+    } else if(err.code === 'auth/popup-closed-by-user') {
       outSet(outEl, 'Sign-in cancelled.', true);
     } else {
       outSet(outEl, err.message, true);
@@ -161,33 +180,35 @@ function injectForgotPassword(outEl) {
   document.getElementById('forgotBtn').addEventListener('click', async (e) => {
     e.preventDefault();
     const email = $('#l_email').value.trim();
-    if (!email) return outSet(outEl, 'Enter your email above first.', true);
+    if(!email) return outSet(outEl, 'Enter your email above first.', true);
     try {
-      await sendPasswordResetEmail(auth, email);
+      await sendPasswordResetEmail(auth, email, {
+        url: window.location.origin + '/reset-password.html'
+      });
       outSet(outEl, '✅ Password reset email sent! Check your inbox.');
-    } catch (err) {
+    } catch(err) {
       outSet(outEl, err.message, true);
     }
   });
 }
 
 // Signup
-async function onSignup(e) {
+async function onSignup(e){
   e.preventDefault();
-  const name = $('#s_name').value.trim();
+  const name  = $('#s_name').value.trim();
   const email = $('#s_email').value.trim();
-  const pass = $('#s_pass').value;
+  const pass  = $('#s_pass').value;
   const pass2 = $('#s_pass2').value;
-  const out = $('#s_out');
-  if (!name || !email || !pass) return outSet(out, 'Please fill all fields', true);
-  if (pass !== pass2) return outSet(out, 'Passwords do not match', true);
+  const out   = $('#s_out');
+  if(!name || !email || !pass) return outSet(out, 'Please fill all fields', true);
+  if(pass !== pass2) return outSet(out, 'Passwords do not match', true);
   try {
     const { user } = await createUserWithEmailAndPassword(auth, email, pass);
     await updateProfile(user, { displayName: name });
     // Save user record to Firestore for admin panel
     try {
       await setDoc(doc(db, 'users', user.uid), { displayName: name, email, createdAt: new Date() });
-    } catch (e) { console.warn('Could not save user record:', e); }
+    } catch(e) { console.warn('Could not save user record:', e); }
     await signOut(auth);
     // Generate OTP and send styled email via Resend
     const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -221,7 +242,7 @@ async function onSignup(e) {
       const saved = sessionStorage.getItem('dekuu_verify_code');
       const savedEmail = sessionStorage.getItem('dekuu_verify_email');
       const savedPass = sessionStorage.getItem('dekuu_verify_pass');
-      if (entered !== saved) return outSet(out, '❌ Wrong code. Try again.', true);
+      if(entered !== saved) return outSet(out, '❌ Wrong code. Try again.', true);
       sessionStorage.removeItem('dekuu_verify_code');
       sessionStorage.removeItem('dekuu_verify_email');
       sessionStorage.removeItem('dekuu_verify_pass');
@@ -229,22 +250,22 @@ async function onSignup(e) {
       const { user: u } = await signInWithEmailAndPassword(auth, savedEmail, savedPass);
       try {
         await addDoc(collection(db, 'verified_users'), { uid: u.uid, email: savedEmail, verifiedAt: new Date() });
-      } catch (e) { console.warn('Could not save verification:', e); }
+      } catch(e) { console.warn('Could not save verification:', e); }
       wrap.remove();
       outSet(out, '✅ Email verified! Redirecting…');
       setTimeout(() => location.href = 'profile.html', 1500);
     };
-  } catch (err) {
+  } catch(err) {
     outSet(out, err.message, true);
   }
 }
 
 // Login
-async function onLogin(e) {
+async function onLogin(e){
   e.preventDefault();
   const email = $('#l_email').value.trim();
-  const pass = $('#l_pass').value;
-  const out = $('#l_out');
+  const pass  = $('#l_pass').value;
+  const out   = $('#l_out');
   // Remove any old resend button
   document.getElementById('resendBtn')?.remove();
   try {
@@ -255,11 +276,11 @@ async function onLogin(e) {
       const q = query(collection(db, 'verified_users'), where('uid', '==', user.uid));
       const snap = await getDocs(q);
       isVerified = !snap.empty;
-    } catch (e) {
+    } catch(e) {
       console.warn('Verification check failed:', e);
       isVerified = true; // allow login if Firestore check fails
     }
-    if (!isVerified) {
+    if(!isVerified){
       await signOut(auth);
       outSet(out, '❌ Please verify your email first. Check your inbox.', true);
       const resendBtn = document.createElement('button');
@@ -291,14 +312,14 @@ async function onLogin(e) {
           const saved = sessionStorage.getItem('dekuu_verify_code');
           const savedEmail = sessionStorage.getItem('dekuu_verify_email');
           const savedPass = sessionStorage.getItem('dekuu_verify_pass');
-          if (entered !== saved) return outSet(out, '❌ Wrong code. Try again.', true);
+          if(entered !== saved) return outSet(out, '❌ Wrong code. Try again.', true);
           sessionStorage.removeItem('dekuu_verify_code');
           sessionStorage.removeItem('dekuu_verify_email');
           sessionStorage.removeItem('dekuu_verify_pass');
           const { user: u2 } = await signInWithEmailAndPassword(auth, savedEmail, savedPass);
           try {
             await addDoc(collection(db, 'verified_users'), { uid: u2.uid, email: savedEmail, verifiedAt: new Date() });
-          } catch (e) { console.warn('Could not save verification:', e); }
+          } catch(e) { console.warn('Could not save verification:', e); }
           wrap.remove();
           outSet(out, '✅ Email verified! Redirecting…');
           setTimeout(() => location.href = 'profile.html', 1500);
@@ -308,7 +329,7 @@ async function onLogin(e) {
       return;
     }
     // Check if user has email 2FA enabled
-    if (localStorage.getItem('dekuu_2fa_' + user.uid) === 'on') {
+    if(localStorage.getItem('dekuu_2fa_' + user.uid) === 'on') {
       await signOut(auth);
       const code = Math.floor(100000 + Math.random() * 900000).toString();
       sessionStorage.setItem('dekuu_2fa_login_code', code);
@@ -329,7 +350,7 @@ async function onLogin(e) {
       document.getElementById('twofa_login_submit').onclick = async () => {
         const entered = document.getElementById('twofa_login_code').value.trim();
         const saved = sessionStorage.getItem('dekuu_2fa_login_code');
-        if (entered !== saved) return outSet(out, '❌ Wrong code. Try again.', true);
+        if(entered !== saved) return outSet(out, '❌ Wrong code. Try again.', true);
         sessionStorage.removeItem('dekuu_2fa_login_code');
         const savedEmail = sessionStorage.getItem('dekuu_2fa_login_email');
         const savedPass = sessionStorage.getItem('dekuu_2fa_login_pass');
@@ -344,7 +365,7 @@ async function onLogin(e) {
     }
     outSet(out, 'Logged in! Redirecting…');
     setTimeout(() => location.href = 'profile.html', 700);
-  } catch (err) {
+  } catch(err) {
     outSet(out, err.message, true);
   }
 }
@@ -404,7 +425,7 @@ async function load2FA() {
           }
         };
         outSet(out, 'Code sent to your email!');
-      } catch (err) {
+      } catch(err) {
         outSet(out, err.message, true);
       }
     };
@@ -412,9 +433,9 @@ async function load2FA() {
 }
 
 // Profile
-async function loadProfile() {
+async function loadProfile(){
   const user = auth.currentUser;
-  if (!user) { location.href = 'login.html'; return; }
+  if(!user){ location.href = 'login.html'; return; }
   const name = user.displayName || user.email;
   $('#pf_name_text').textContent = name;
   $('#pf_email').textContent = user.email;
@@ -425,7 +446,7 @@ async function loadProfile() {
     const q = query(collection(db, 'verified_users'), where('uid', '==', user.uid));
     const snap = await getDocs(q);
     isVerified = !snap.empty;
-  } catch (e) {
+  } catch(e) {
     console.warn('Could not check verification status:', e);
   }
 
@@ -436,11 +457,11 @@ async function loadProfile() {
 
   // Avatar
   const avatarEl = $('#pf_avatar_img');
-  if (user.photoURL) {
+  if(user.photoURL){
     avatarEl.src = user.photoURL;
     avatarEl.style.display = 'block';
   } else {
-    const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    const initials = name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
     avatarEl.style.display = 'none';
     const fallback = document.createElement('div');
     fallback.textContent = initials;
@@ -450,32 +471,32 @@ async function loadProfile() {
 }
 
 // Update display name
-async function onSaveName() {
+async function onSaveName(){
   const name = $('#pf_name_edit').value.trim();
-  const out = $('#pf_out');
-  if (!name) return outSet(out, 'Enter a name', true);
+  const out  = $('#pf_out');
+  if(!name) return outSet(out, 'Enter a name', true);
   try {
     await updateProfile(auth.currentUser, { displayName: name });
     $('#pf_name_text').textContent = name;
     outSet(out, 'Name saved!');
-  } catch (err) {
+  } catch(err) {
     outSet(out, err.message, true);
   }
 }
 
 // Change email
-async function onChangeEmail() {
+async function onChangeEmail(){
   const newEmail = $('#pf_email_edit').value.trim();
   const out = $('#pf_out');
-  if (!newEmail) return outSet(out, 'Enter a new email', true);
+  if(!newEmail) return outSet(out, 'Enter a new email', true);
   try {
     await updateEmail(auth.currentUser, newEmail);
     await sendEmailVerification(auth.currentUser);
     await sendCustomEmail(newEmail, 'emailChange', window.location.origin + '/profile.html', auth.currentUser.displayName);
     $('#pf_email').textContent = newEmail;
     outSet(out, '✅ Email updated! Check your new inbox to verify it.');
-  } catch (err) {
-    if (err.code === 'auth/requires-recent-login') {
+  } catch(err) {
+    if(err.code === 'auth/requires-recent-login'){
       outSet(out, 'For security, please log out and log back in before changing your email.', true);
     } else {
       outSet(out, err.message, true);
@@ -484,18 +505,18 @@ async function onChangeEmail() {
 }
 
 // Change password
-async function onChangePassword() {
-  const pass = $('#pf_pass').value;
+async function onChangePassword(){
+  const pass  = $('#pf_pass').value;
   const pass2 = $('#pf_pass2').value;
-  const out = $('#pf_out');
-  if (!pass || pass.length < 6) return outSet(out, 'Password too short', true);
-  if (pass !== pass2) return outSet(out, 'Passwords do not match', true);
+  const out   = $('#pf_out');
+  if(!pass || pass.length < 6) return outSet(out, 'Password too short', true);
+  if(pass !== pass2) return outSet(out, 'Passwords do not match', true);
   try {
     await updatePassword(auth.currentUser, pass);
     outSet(out, 'Password changed!');
     $('#pf_pass').value = ''; $('#pf_pass2').value = '';
-  } catch (err) {
-    if (err.code === 'auth/requires-recent-login') {
+  } catch(err) {
+    if(err.code === 'auth/requires-recent-login'){
       outSet(out, 'For security, please log out and log back in before changing your password.', true);
     } else {
       outSet(out, err.message, true);
@@ -504,35 +525,35 @@ async function onChangePassword() {
 }
 
 // Avatar upload — disabled (requires Firebase Storage paid plan)
-async function onAvatarChange() {
+async function onAvatarChange(){
   outSet($('#pf_out'), 'Avatar upload requires a paid Firebase plan.', true);
 }
 
-function outSet(el, msg, err = false) {
+function outSet(el, msg, err=false){
   el.className = 'alert ' + (err ? 'err' : 'ok');
   el.textContent = msg;
 }
 
 // Contact → save to Firestore
-async function onContact(e) {
+async function onContact(e){
   e.preventDefault();
-  const name = $('#c_name').value.trim();
+  const name  = $('#c_name').value.trim();
   const email = $('#c_email').value.trim();
-  const msg = $('#c_msg').value.trim();
-  const out = $('#c_out');
-  if (!name || !email || !msg) return outSet(out, 'Please fill all fields', true);
+  const msg   = $('#c_msg').value.trim();
+  const out   = $('#c_out');
+  if(!name || !email || !msg) return outSet(out, 'Please fill all fields', true);
   try {
     await addDoc(collection(db, 'contacts'), { name, email, message: msg, createdAt: new Date() });
     outSet(out, 'Message sent!');
     $('#c_form').reset();
-  } catch (err) {
+  } catch(err) {
     outSet(out, 'Error sending message', true);
   }
 }
 
 // Blog / Info loader
-async function loadPosts() {
-  const wrap = $('#posts'); if (!wrap) return;
+async function loadPosts(){
+  const wrap = $('#posts'); if(!wrap) return;
   try {
     const res = await fetch('posts.json');
     const posts = await res.json();
@@ -545,7 +566,7 @@ async function loadPosts() {
       </article>
     `).join('');
     $$('.post.reveal').forEach(el => obs.observe(el));
-  } catch (err) {
+  } catch(err) {
     wrap.innerHTML = '<div class="alert err">Could not load posts.</div>';
   }
 }
@@ -556,18 +577,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const rawPage = location.pathname.split('/').pop() || 'index';
   const page = rawPage.replace('.html', '').toLowerCase();
 
-  if (page === 'signup') {
+  if(page === 'signup'){
     $('#s_form')?.addEventListener('submit', onSignup);
     injectGoogleButton($('#s_form'), $('#s_out'));
   }
-  if (page === 'login') {
+  if(page === 'login'){
     $('#l_form')?.addEventListener('submit', onLogin);
     injectForgotPassword($('#l_out'));
     injectGoogleButton($('#l_form'), $('#l_out'));
   }
-  if (page === 'profile') {
+  if(page === 'profile'){
     onAuthStateChanged(auth, (user) => {
-      if (!user) { location.href = 'login.html'; return; }
+      if(!user){ location.href = 'login.html'; return; }
       loadProfile();
       load2FA();
     });
@@ -576,15 +597,15 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#pf_chgpass')?.addEventListener('click', onChangePassword);
     $('#pf_avatar')?.addEventListener('change', onAvatarChange);
   }
-  if (page === 'contact') {
+  if(page === 'contact') {
     $('#c_form')?.addEventListener('submit', onContact);
     // Pre-fill name and email if logged in
     onAuthStateChanged(auth, (user) => {
-      if (user) {
-        if ($('#c_name') && user.displayName) $('#c_name').value = user.displayName;
-        if ($('#c_email') && user.email) $('#c_email').value = user.email;
+      if(user) {
+        if($('#c_name') && user.displayName) $('#c_name').value = user.displayName;
+        if($('#c_email') && user.email) $('#c_email').value = user.email;
       }
     });
   }
-  if (page === 'info' || page === 'blog') loadPosts();
+  if(page === 'info' || page === 'blog') loadPosts();
 });
