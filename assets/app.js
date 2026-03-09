@@ -79,7 +79,8 @@ async function renderNav(user) {
            <span style="position:relative;z-index:1">⚡ Admin</span>
          </a>`
       : '';
-    nav.innerHTML = `${adminBtn}<a class="btn small ghost" href="profile.html">Profile</a> <a class="btn small ghost" id="logoutBtn" href="#">Logout</a>`;
+    const displayName = user.displayName ? user.displayName.split(' ')[0] : user.email.split('@')[0];
+    nav.innerHTML = `${adminBtn}<a class="btn small ghost" href="profile.html">👤 ${displayName}</a> <a class="btn small ghost" id="logoutBtn" href="#">Logout</a>`;
     $('#logoutBtn')?.addEventListener('click', async (e) => {
       e.preventDefault();
       await signOut(auth);
@@ -114,12 +115,9 @@ async function onGoogleSignIn(outEl) {
         });
       }
     } catch(e) { console.warn('Could not save Google user record:', e); }
-    // Send welcome email with password reset link for new Google users
+    // Send welcome email for new Google users
     if(isNew) {
       try {
-        await sendPasswordResetEmail(auth, user.email, {
-          url: window.location.origin + '/reset-password.html'
-        });
         await fetch('/api/send-email', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -127,7 +125,7 @@ async function onGoogleSignIn(outEl) {
             to: user.email,
             type: 'googleWelcome',
             name: user.displayName || user.email,
-            link: window.location.origin + '/login.html'
+            link: window.location.origin + '/profile.html'
           })
         });
       } catch(e) { console.warn('Welcome email failed:', e); }
